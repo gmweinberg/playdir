@@ -20,32 +20,35 @@ def get_dir_files(dir_):
 
 def play_one_file(player):
     killit = False
-    player.play()
-    time.sleep(0.5)
-    while True:
-        # Check for input with timeout
-        if select.select([sys.stdin], [], [], 0.1)[0]:  # 0.1 second timeout
-            c = sys.stdin.read(1)
-            if c == 'p':
-                if player.is_playing():
-                    player.pause()
-                    print("Paused")
-                else:
-                    player.play()
-                    print("Playing")
-            elif c == 'q':
-                player.stop()
-                break
-            elif c == 'z':
-                player.stop()
-                killit = True
-                break
+    try:
+        player.play()
+        time.sleep(0.5)
+        while True:
+            # Check for input with timeout
+            if select.select([sys.stdin], [], [], 0.1)[0]:  # 0.1 second timeout
+                c = sys.stdin.read(1)
+                if c == 'p':
+                    if player.is_playing():
+                        player.pause()
+                        print("\rPaused")
+                    else:
+                        player.play()
+                        print("\rPlaying")
+                elif c == 'q':
+                    player.stop()
+                    break
+                elif c == 'z':
+                    player.stop()
+                    killit = True
+                    break
 
-        # Check if song has finished
-        if not player.is_playing() and player.get_state() == vlc.State.Ended:
-            print("\nPlayback finished")
-            break
-        time.sleep(0.1)
+            # Check if song has finished
+            if not player.is_playing() and player.get_state() == vlc.State.Ended:
+                print("\nPlayback finished")
+                break
+            time.sleep(0.1)
+    except Exception as ex:
+        print(ex)
     return killit
 
 
@@ -60,7 +63,7 @@ def play_files(files):
         instance = vlc.Instance()
         player = instance.media_player_new()
         for afile in files:
-            print("playing {}", afile)
+            print("\rplaying {}".format(afile))
             media = instance.media_new(afile)
             player.set_media(media)
             killit = play_one_file(player)
@@ -86,7 +89,7 @@ def play_mp3_select(player, filename):
         player = vlc.MediaPlayer(filename)
         player.play()
 
-        print("Playing... Press 'p' to pause/resume, 'q' to quit")
+        print("\rPlaying... Press 'p' to pause/resume, 'q' to quit")
 
         while True:
             # Check for input with timeout
