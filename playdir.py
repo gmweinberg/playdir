@@ -30,10 +30,10 @@ def play_one_file(player):
                 if c == 'p':
                     if player.is_playing():
                         player.pause()
-                        print("\rPaused")
+                        print("Paused\r")
                     else:
                         player.play()
-                        print("\rPlaying")
+                        print("Playing\r")
                 elif c == 'q':
                     player.stop()
                     break
@@ -44,7 +44,7 @@ def play_one_file(player):
 
             # Check if song has finished
             if not player.is_playing() and player.get_state() == vlc.State.Ended:
-                print("\nPlayback finished")
+                print("Playback finished\r")
                 break
             time.sleep(0.1)
     except Exception as ex:
@@ -60,10 +60,10 @@ def play_files(files):
     try:
         # Set terminal to raw mode
         tty.setraw(fd)
-        instance = vlc.Instance()
+        instance = vlc.Instance('--aout=pulse')
         player = instance.media_player_new()
         for afile in files:
-            print("\rplaying {}".format(afile))
+            print("\rplaying {}\r".format(afile))
             media = instance.media_new(afile)
             player.set_media(media)
             killit = play_one_file(player)
@@ -166,19 +166,22 @@ def play_mp3(file_path):
 
 if __name__ == '__main__':
     
-    from argparse import ArgumentParser
-    parser = ArgumentParser()
-    parser.add_argument('-d', '--directory', help='directory of files to play')
-    parser.add_argument('-s', '--song', help='play one song')
-    parser.add_argument('-p', '--picker', help='open picker', action="store_true")
-    files = []
-    args = parser.parse_args()
-    if args.directory:
-        files = get_dir_files(args.directory)
-    if args.picker:
-        print("not today")
-    if args.song:
-        files = [args.song]
+    if False:
+        from argparse import ArgumentParser
+        parser = ArgumentParser()
+        parser.add_argument('-d', '--directory', help='directory of files to play')
+        parser.add_argument('-s', '--song', help='play one song')
+        parser.add_argument('-p', '--picker', help='open picker', action="store_true")
+        files = []
+        args = parser.parse_args()
+        if args.directory:
+            files = get_dir_files(args.directory)
+        if args.picker:
+            print("not today")
+        if args.song:
+            files = [args.song]
+    else:
+        files = get_dir_files(sys.argv[1])
     play_files(files)
 
 
