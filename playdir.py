@@ -2,9 +2,9 @@
 
 import time
 import glob
-import keyboard
+import keyboard # pip install keyboard
 import subprocess
-import vlc
+import vlc # pip install python-vlc
 
 import sys
 import tty
